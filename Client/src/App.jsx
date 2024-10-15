@@ -1,8 +1,8 @@
 // import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+// import Navbar from './components/Navbar';
+// import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -10,6 +10,7 @@ import CustomerReviewPage from './pages/CustomerReviewPage';
 import BookingPage from './pages/BookingPage';
 import ChatPage from './pages/ChatPage';
 import PaymentPage from './pages/PaymentPage';
+import './index.css';
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -19,7 +20,7 @@ function App() {
     <ClerkProvider publishableKey={clerkPubKey}>
       <Router>
         <div className="flex flex-col min-h-screen">
-          <Navbar />
+          {/* <Navbar /> */}
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<LandingPage />} />
@@ -31,7 +32,7 @@ function App() {
               <Route path="/payment" element={<PaymentPage />} />
             </Routes>
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </Router>
     </ClerkProvider>

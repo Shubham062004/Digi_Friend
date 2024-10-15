@@ -5,7 +5,7 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // This should be managed by your auth context
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
