@@ -10,64 +10,70 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Could not connect to MongoDB', err));
 
-// User Schema
-const userSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: String,
-  phoneNumber: String,
-  // Add other necessary fields
-});
-
-const User = mongoose.model('User', userSchema);
-
-// Message Schema
+// Message Schema and Model
 const messageSchema = new mongoose.Schema({
   sender: String,
-  recipient: String,
   content: String,
   timestamp: { type: Date, default: Date.now },
 });
 
 const Message = mongoose.model('Message', messageSchema);
 
-// Routes
-
-// Get all users (for admin)
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching users', error: error.message });
-  }
+// Review Schema and Model
+const reviewSchema = new mongoose.Schema({
+  name: String,
+  rating: Number,
+  comment: String,
+  avatar: String,
+  timestamp: { type: Date, default: Date.now },
 });
 
-// Get messages for a specific user
-app.get('/api/messages/:userId', async (req, res) => {
+const Review = mongoose.model('Review', reviewSchema);
+
+// Message routes
+app.get('/api/messages', async (req, res) => {
   try {
-    const messages = await Message.find({
-      $or: [{ sender: req.params.userId }, { recipient: req.params.userId }]
-    }).sort({ timestamp: 1 });
+    const messages = await Message.find().sort({ timestamp: -1 }).limit(50);
     res.json(messages);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching messages', error: error.message });
   }
 });
 
-// Send a message
 app.post('/api/messages', async (req, res) => {
   try {
-    const newMessage = new Message(req.body);
+    const newMessage = new Message({
+      sender: 'You', // In a real app, this would be the authenticated user
+      content: req.body.content,
+    });
     await newMessage.save();
     res.status(201).json(newMessage);
   } catch (error) {
-    res.status(500).json({ message: 'Error sending message', error: error.message });
+    res.status(500).json({ message: 'Error creating message', error: error.message });
+  }
+});
+
+// Review routes
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const reviews = await Review.find().sort({ timestamp: -1 }).limit(10);
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching reviews', error: error.message });
+  }
+});
+
+app.post('/api/reviews', async (req, res) => {
+  try {
+    const newReview = new Review(req.body);
+    await newReview.save();
+    res.status(201).json(newReview);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating review', error: error.message });
   }
 });
 

@@ -1,0 +1,32 @@
+[
+    {
+      "_id": {"$oid": "60d5ecb54f7e3d001f3b5c1a"},
+      "sender": "John",
+      "content": "Hello, how are you?",
+      "timestamp": {"$date": "2023-06-25T10:30:00Z"}
+    },
+    {
+      "_id": {"$oid": "60d5ecb54f7e3d001f3b5c1b"},
+      "sender": "Alice",
+      "content": "I'm good, thanks! How about you?",
+      "timestamp": {"$date": "2023-06-25T10:31:00Z"}
+    },
+    {
+      "_id": {"$oid": "60d5ecb54f7e3d001f3b5c1c"},
+      "sender": "John",
+      "content": "I'm doing well too. Any plans for the weekend?",
+      "timestamp": {"$date": "2023-06-25T10:32:00Z"}
+    },
+    {
+      "_id": {"$oid": "60d5ecb54f7e3d001f3b5c1d"},
+      "sender": "Alice",
+      "content": "Not yet, maybe we could catch up?",
+      "timestamp": {"$date": "2023-06-25T10:33:00Z"}
+    },
+    {
+      "_id": {"$oid": "60d5ecb54f7e3d001f3b5c1e"},
+      "sender": "John",
+      "content": "Sounds great! Let's plan something.",
+      "timestamp": {"$date": "2023-06-25T10:34:00Z"}
+    }
+  ]
