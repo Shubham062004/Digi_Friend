@@ -9,7 +9,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     fetchMessages();
-  }, []);
+  },);
 
   const fetchMessages = async () => {
     try {
