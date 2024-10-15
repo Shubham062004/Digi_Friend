@@ -15,33 +15,59 @@ mongoose.connect(process.env.MONGODB_URI, {
   useUnifiedTopology: true,
 });
 
+// User Schema
+const userSchema = new mongoose.Schema({
+  firstName: String,
+  lastName: String,
+  email: String,
+  phoneNumber: String,
+  // Add other necessary fields
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Message Schema
 const messageSchema = new mongoose.Schema({
   sender: String,
+  recipient: String,
   content: String,
   timestamp: { type: Date, default: Date.now },
 });
 
 const Message = mongoose.model('Message', messageSchema);
 
-app.get('/api/messages', async (req, res) => {
+// Routes
+
+// Get all users (for admin)
+app.get('/api/users', async (req, res) => {
   try {
-    const messages = await Message.find().sort({ timestamp: -1 }).limit(50);
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
+});
+
+// Get messages for a specific user
+app.get('/api/messages/:userId', async (req, res) => {
+  try {
+    const messages = await Message.find({
+      $or: [{ sender: req.params.userId }, { recipient: req.params.userId }]
+    }).sort({ timestamp: 1 });
     res.json(messages);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching messages', error: error.message });
   }
 });
 
+// Send a message
 app.post('/api/messages', async (req, res) => {
   try {
-    const newMessage = new Message({
-      sender: 'You', // In a real app, this would be the authenticated user
-      content: req.body.content,
-    });
+    const newMessage = new Message(req.body);
     await newMessage.save();
     res.status(201).json(newMessage);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating message', error: error.message });
+    res.status(500).json({ message: 'Error sending message', error: error.message });
   }
 });
 
