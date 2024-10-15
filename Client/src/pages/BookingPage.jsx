@@ -1,18 +1,11 @@
-import React from 'react';
-import { getCalApi } from "@calcom/embed-react";
-import { Button } from '@/components/ui/button';
+// import { getCalApi } from "@calcom/embed-react";
+// import React from 'react';
+import { Link } from 'react-router-dom';
 
-export default function BookingPage() {
-  React.useEffect(() => {
-    (async function () {
-      const cal = await getCalApi();
-      cal("ui", {
-        styles: { branding: { brandColor: "#000000" } },
-        hideEventTypeDetails: false,
-        layout: "month_view"
-      });
-    })();
-  }, []);
+const BookingPage = () => {
+  const handleScheduleMeeting = () => {
+    window.location.href = 'https://cal.com/your-organization'; // Replace with your actual Cal.com link
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -23,31 +16,32 @@ export default function BookingPage() {
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Select a time that works for you
+              Ready to schedule a meeting?
             </h3>
             <div className="mt-2 max-w-xl text-sm text-gray-500">
-              <p>Choose from the available time slots to schedule your meeting.</p>
+              <p>Click the button below to be redirected to our scheduling page.</p>
             </div>
             <div className="mt-5">
-              <Button
-                onClick={() => {
-                  const cal = window.Cal;
-                  if (cal) {
-                    cal("ui", {
-                      styles: { branding: { brandColor: "#000000" } },
-                      hideEventTypeDetails: false,
-                      layout: "month_view"
-                    });
-                  }
-                }}
+              <button
+                onClick={handleScheduleMeeting}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Schedule Meeting
-              </Button>
+                Schedule a Meeting
+              </button>
             </div>
           </div>
-          <div className="cal-embed-container" style={{ minHeight: "600px" }} />
+        </div>
+        <div className="mt-8 text-center">
+          <Link
+            to="/"
+            className="text-indigo-600 hover:text-indigo-500 font-medium"
+          >
+            Back to Home
+          </Link>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default BookingPage;
