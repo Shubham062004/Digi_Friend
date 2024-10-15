@@ -1,138 +1,153 @@
 // import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, MessageCircle, Calendar, Users } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { FaUserFriends, FaLock, FaComments, FaStar } from 'react-icons/fa';
 
-export default function LandingPage() {
+const LandingPage = () => {
   return (
-    <div className="bg-white">
-      <main>
-        {/* Hero section */}
-        <div className="relative">
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gray-100"></div>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div className="relative shadow-xl sm:rounded-2xl sm:overflow-hidden">
-              <div className="absolute inset-0">
-                <img
-                  className="h-full w-full object-cover"
-                  src="/placeholder.svg?height=600&width=1200"
-                  alt="People connecting"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-800 to-indigo-700 mix-blend-multiply"></div>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow">
+        {/* Image Carousel */}
+        <section className="w-full">
+          <Carousel autoPlay infiniteLoop showThumbs={false}>
+            <div>
+              <img src="/placeholder.svg?height=400&width=800" alt="Carousel 1" className="w-full h-[400px] object-cover" />
+            </div>
+            <div>
+              <img src="/placeholder.svg?height=400&width=800" alt="Carousel 2" className="w-full h-[400px] object-cover" />
+            </div>
+            <div>
+              <img src="/placeholder.svg?height=400&width=800" alt="Carousel 3" className="w-full h-[400px] object-cover" />
+            </div>
+          </Carousel>
+        </section>
+
+        {/* Quote Section */}
+        <section className="bg-gray-100 py-16">
+          <div className="container mx-auto px-4">
+            <h1 className="text-3xl md:text-4xl text-center font-bold text-gray-800 max-w-4xl mx-auto">
+              Talkmind is a mental health-focused therapy platform that helps you find the right support and resources to help improve your well-being.
+            </h1>
+          </div>
+        </section>
+
+        {/* What We Do Section */}
+        <section className="py-16">
+          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div className="md:w-1/2 mb-8 md:mb-0">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">What we do</h2>
+              <p className="text-lg text-gray-600 mb-6">
+                As a Talkmind patient who experiences mental health difficulties, you will
+                receive a comprehensive treatment plan appropriate to your diagnosis,
+                to help improve your quality of life.
+              </p>
+              <Link to="/about" className="inline-block bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
+                About us
+              </Link>
+            </div>
+            <div className="md:w-1/2">
+              <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202024-10-15%20at%2000.51.33_7f73c1fb-nQCAKjsr7eJy3uid9dFmduOMSUepnO.jpg" alt="Therapy session" className="w-full rounded-lg shadow-lg" />
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="bg-gray-100 py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-wrap justify-around items-center">
+              <div className="w-full sm:w-1/3 mb-8 sm:mb-0 flex flex-col items-center">
+                <div className="bg-white rounded-full p-6 mb-4 shadow-lg">
+                  <FaUserFriends className="text-4xl text-blue-500" />
+                </div>
+                <p className="text-center text-gray-800">Friendly Support</p>
               </div>
-              <div className="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
-                <h1 className="text-center text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                  <span className="block text-white">Connect, Chat, and Grow with</span>
-                  <span className="block text-indigo-200">Digi Friend</span>
-                </h1>
-                <p className="mt-6 max-w-lg mx-auto text-center text-xl text-indigo-200 sm:max-w-3xl">
-                  Your digital companion for meaningful connections, support, and personal growth. Join our community today and experience the power of digital friendship.
-                </p>
-                <div className="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
-                  <div className="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
-                    <Link to="/sign-up">
-                      <Button variant="default" size="lg" className="flex items-center justify-center px-8 py-3">
-                        Get started
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Button>
-                    </Link>
-                    <Link to="/about">
-                      <Button variant="outline" size="lg" className="flex items-center justify-center px-8 py-3 bg-white text-indigo-700 hover:bg-indigo-50">
-                        Learn more
-                      </Button>
-                    </Link>
-                  </div>
+              <div className="w-full sm:w-1/3 mb-8 sm:mb-0 flex flex-col items-center">
+                <div className="bg-white rounded-full p-6 mb-4 shadow-lg">
+                  <FaLock className="text-4xl text-blue-500" />
+                </div>
+                <p className="text-center text-gray-800">Your chats and talks are private</p>
+              </div>
+              <div className="w-full sm:w-1/3 flex flex-col items-center">
+                <div className="bg-white rounded-full p-6 mb-4 shadow-lg">
+                  <FaComments className="text-4xl text-blue-500" />
+                </div>
+                <p className="text-center text-gray-800">Free Chats</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-wrap justify-around">
+              <div className="w-full sm:w-1/3 mb-8 sm:mb-0">
+                <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col justify-between">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Chat with Us</h3>
+                  <p className="text-gray-600 mb-4">Connect with our professionals for immediate support.</p>
+                  <Link to="/chat" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center">
+                    Start Chatting
+                  </Link>
+                </div>
+              </div>
+              <div className="w-full sm:w-1/3 mb-8 sm:mb-0">
+                <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col justify-between">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Book a Meeting</h3>
+                  <p className="text-gray-600 mb-4">Schedule a one-on-one session with our experts.</p>
+                  <Link to="/booking" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center">
+                    Book Now
+                  </Link>
+                </div>
+              </div>
+              <div className="w-full sm:w-1/3">
+                <div className="bg-white rounded-lg shadow-lg p-6 h-full flex flex-col justify-between">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Read Reviews</h3>
+                  <p className="text-gray-600 mb-4">See what others are saying about our services.</p>
+                  <Link to="/reviews" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center">
+                    View Reviews
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Feature section */}
-        <div className="py-16 bg-gray-50 overflow-hidden lg:py-24">
-          <div className="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
-            <div className="relative">
-              <h2 className="text-center text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                A better way to connect and grow
-              </h2>
-              <p className="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
-                Digi Friend offers a suite of features designed to help you build meaningful connections, find support, and achieve personal growth in a safe and welcoming digital environment.
-              </p>
+        {/* Recent Reviews Section */}
+        <section className="bg-gray-100 py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Recent 5-Star Reviews</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((review) => (
+                <div key={review} className="bg-white rounded-lg shadow-lg p-6">
+                  <div className="flex items-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar key={i} className="text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-4">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec
+                    ipsum vel justo fermentum faucibus. Donec vel arcu in enim
+                    consectetur fermentum.
+                  </p>
+                  <p className="font-bold text-gray-800">- Happy Client</p>
+                </div>
+              ))}
             </div>
-
-            <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-              <div className="relative">
-                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">
-                  Connect with like-minded individuals
-                </h3>
-                <p className="mt-3 text-lg text-gray-500">
-                  Our platform brings together people from all walks of life, allowing you to form genuine connections based on shared interests, experiences, and goals.
-                </p>
-
-                <dl className="mt-10 space-y-10">
-                  <div className="relative">
-                    <dt>
-                      <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                        <MessageCircle className="h-6 w-6" />
-                      </div>
-                      <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Real-time chat</p>
-                    </dt>
-                    <dd className="mt-2 ml-16 text-base text-gray-500">
-                      Engage in meaningful conversations through our real-time chat feature, allowing you to connect instantly with friends and support groups.
-                    </dd>
-                  </div>
-
-                  <div className="relative">
-                    <dt>
-                      <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                        <Calendar className="h-6 w-6" />
-                      </div>
-                      <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Schedule meetings</p>
-                    </dt>
-                    <dd className="mt-2 ml-16 text-base text-gray-500">
-                      Easily schedule one-on-one or group meetings with our integrated calendar system, making it simple to plan virtual hangouts or support sessions.
-                    </dd>
-                  </div>
-
-                  <div className="relative">
-                    <dt>
-                      <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                        <Users className="h-6 w-6" />
-                      </div>
-                      <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Join support groups</p>
-                    </dt>
-                    <dd className="mt-2 ml-16 text-base text-gray-500">
-                      Find and join support groups tailored to your needs, where you can share experiences, offer advice, and receive support from others who understand.
-                    </dd>
-                  </div>
-                </dl>
-              </div>
-
-              <div className="mt-10 -mx-4 relative lg:mt-0" aria-hidden="true">
-                <img className="relative mx-auto" width="490" src="/placeholder.svg?height=490&width=490" alt="" />
-              </div>
+            <div className="text-center mt-8">
+              <Link to="/reviews" className="inline-block bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
+                See More Reviews
+              </Link>
             </div>
           </div>
-        </div>
-
-        {/* CTA section */}
-        <div className="bg-indigo-700">
-          <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-              <span className="block">Ready to get started?</span>
-              <span className="block">Join Digi Friend today.</span>
-            </h2>
-            <p className="mt-4 text-lg leading-6 text-indigo-200">
-              Start your journey towards meaningful connections and personal growth. Sign up now and experience the power of digital friendship.
-            </p>
-            <Link to="/sign-up">
-              <Button variant="default" size="lg" className="mt-8 w-full sm:w-auto">
-                Sign up for free
-              </Button>
-            </Link>
-          </div>
-        </div>
+        </section>
       </main>
+      <Footer />
     </div>
   );
-}
+};
+
+export default LandingPage;
