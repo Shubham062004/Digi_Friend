@@ -1,7 +1,6 @@
-// import React from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../Navbar';
+import Footer from '../Footer';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { FaUserFriends, FaLock, FaComments, FaStar } from 'react-icons/fa';

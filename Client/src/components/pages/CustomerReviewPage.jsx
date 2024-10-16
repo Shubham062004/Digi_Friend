@@ -1,32 +1,23 @@
-// import React from 'react';
+import { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
-
-const reviews = [
-  {
-    id: 1,
-    name: 'Emily Johnson',
-    rating: 5,
-    comment: 'Digi Friend has been a game-changer for me. I&apos;ve made genuine connections and found incredible support here.',
-    avatar: '/placeholder.svg?height=40&width=40',
-  },
-  {
-    id: 2,
-    name: 'Michael Chen',
-    rating: 4,
-    comment: 'The chat feature is fantastic, and the support groups have been incredibly helpful. Highly recommend!',
-    avatar: '/placeholder.svg?height=40&width=40',
-  },
-  {
-    id: 3,
-    name: 'Sarah Thompson',
-    rating: 5,
-    comment: 'I love how easy it is to schedule meetings and connect with like-minded individuals. Digi Friend is amazing!',
-    avatar: '/placeholder.svg?height=40&width=40',
-  },
-  // Add more reviews as needed
-];
+import axios from 'axios';
 
 export default function CustomerReviewPage() {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/reviews'); // Adjust API endpoint as needed
+      setReviews(response.data);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
   return (
     <div className="bg-white py-16 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +31,7 @@ export default function CustomerReviewPage() {
         </div>
         <div className="mt-16 grid gap-8 lg:grid-cols-3">
           {reviews.map((review) => (
-            <div key={review.id} className="bg-gray-50 rounded-lg p-6 shadow-sm">
+            <div key={review._id} className="bg-gray-50 rounded-lg p-6 shadow-sm">
               <div className="flex items-center">
                 <img className="h-12 w-12 rounded-full" src={review.avatar} alt={review.name} />
                 <div className="ml-4">
