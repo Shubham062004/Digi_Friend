@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Navbar from '../Navbar';  // Adjust path as needed
-import Footer from '../Footer';  // Adjust path as needed
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
-function ChatPage() {
+export default function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [error, setError] = useState(null);
@@ -101,5 +101,3 @@ function ChatPage() {
     </div>
   );
 }
-
-export default ChatPage;
