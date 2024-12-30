@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import LandingPage from './components/pages/LandingPage';
 import LoginPage from './components/pages/LoginPage';
@@ -19,7 +19,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/reviews" element={<CustomerReviewPage />} />
           <Route path="/booking" element={<BookingPage />} />
-          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chatpage" element={<ChatPage />} />
           <Route path="/payment" element={<PaymentPage />} />
         </Routes>
       </main>
