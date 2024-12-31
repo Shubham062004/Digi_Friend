@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -13,8 +14,9 @@ import { useEffect, useRef } from "react";
 import Splide from "@splidejs/splide";
 import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/splide/dist/css/splide.min.css";
-import Navbar from "../Navbar";
-import Footer from "../Footer";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+import therapySession from "../assets/therapySession.jpeg";
 
 const LandingPage = () => {
   const splideRef = useRef(null);
@@ -142,7 +144,7 @@ const LandingPage = () => {
             </div>
             <div className="md:w-1/2">
               <img
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202024-10-15%20at%2000.51.33_7f73c1fb-nQCAKjsr7eJy3uid9dFmduOMSUepnO.jpg"
+                src={therapySession}
                 alt="Therapy session"
                 className="w-full rounded-lg shadow-lg"
               />

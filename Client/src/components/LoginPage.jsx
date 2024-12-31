@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { SignIn, SignUp } from "@clerk/clerk-react";
 
@@ -5,6 +6,7 @@ export default function AuthPage() {
   const [showSignUp, setShowSignUp] = useState(false);
 
   return (
+    // <>This is Auth Page</>
     <div className="min-h-screen bg-gray-100 relative">
       {/* Main content */}
       <div className={`min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 transition-all duration-300 ${showSignUp ? 'blur-sm' : ''}`}>
