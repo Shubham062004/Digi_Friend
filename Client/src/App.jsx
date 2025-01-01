@@ -1,6 +1,7 @@
 import React from 'react';
 import {Route, Routes } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
+import CustomerReviewPage from "./components/CustomerReviewPage";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
 import CustomerReviewPage from "./components/CustomerReviewPage";
@@ -15,6 +16,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/reviews" element={<CustomerReviewPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/reviews" element={<CustomerReviewPage />} />

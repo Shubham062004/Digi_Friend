@@ -16,6 +16,7 @@ import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+// import { getCalApi } from "@calcom/embed-react";
 import therapySession from "../assets/therapySession.jpeg";
 
 const LandingPage = () => {
@@ -80,6 +81,10 @@ const LandingPage = () => {
       author: "Happy Client 5",
     },
   ];
+  
+  const handleScheduleMeeting = () => {
+    window.location.href = 'https://cal.com/your-organization'; // Replace with your actual Cal.com link
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -241,7 +246,10 @@ const LandingPage = () => {
                   </div>
                   <div className="flex justify-center">
                     <Link
+                      // to="/booking"
+                      onClick={handleScheduleMeeting}
                       to="/booking"
+
                       className="inline-block bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition duration-300 text-center w-full md:w-auto"
                     >
                       Book Now
