@@ -248,6 +248,8 @@ const LandingPage = () => {
                     <Link
                       // to="/booking"
                       onClick={handleScheduleMeeting}
+                      to="/booking"
+
                       className="inline-block bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition duration-300 text-center w-full md:w-auto"
                     >
                       Book Now
