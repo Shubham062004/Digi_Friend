@@ -83,14 +83,17 @@ const LandingPage = () => {
   ];
   
   const handleScheduleMeeting = () => {
-    window.location.href = 'https://cal.com/your-organization'; // Replace with your actual Cal.com link
+    const apiKey = 'cal_live_6a851c72d7d64b3bc8fd7fcf24bc8773'; // Your Cal.com API key
+    const baseUrl = `https://cal.com/your-organization?apiKey=${apiKey}`;
+    window.location.href = baseUrl; // Redirect to the Cal.com scheduling page
   };
+  
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        {/* Image Carousel Section */}
+        {/* Image Carousel Section */} 
         <section className="w-full">
           <Carousel autoPlay infiniteLoop showThumbs={false}>
             <div>
@@ -128,7 +131,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Our Services Section */}
+        {/* What We Do Section */}
         <section className="py-16">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0">
