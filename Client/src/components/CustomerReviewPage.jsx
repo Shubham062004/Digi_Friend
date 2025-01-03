@@ -16,7 +16,7 @@ const ReviewPage = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/reviews', {
+      const response = await axios.get('https://server-digi-friend.vercel.app/api/reviews', {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -45,7 +45,7 @@ const ReviewPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/reviews', {
+      const response = await axios.post('https://server-digi-friend.vercel.app/api/reviews', {
         ...newReview,
         name: user.fullName,
         avatar: user.profileImageUrl,

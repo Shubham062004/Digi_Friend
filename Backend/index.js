@@ -9,7 +9,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: 'http://localhost:3000', // Update this to match your actual frontend port
+  origin: ['http://localhost:3000', 'https://digifriend.vercel.app'], // Allow both local and production origins
   credentials: true
 }));
 
