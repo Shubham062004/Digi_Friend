@@ -10,19 +10,16 @@ const ReviewPage = () => {
   const { user } = useUser();
   const [error, setError] = useState(null);
 
+  const API_URL = import.meta.env.REACT_APP_API_URL || 'https://server-digi-friend.vercel.app';
+
   useEffect(() => {
     fetchReviews();
   }, []);
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get('https://server-digi-friend.vercel.app/api/reviews', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
-      const sortedReviews = response.data.sort((a, b) => 
+      const response = await axios.get(`${API_URL}/api/reviews`);
+      const sortedReviews = response.data.sort((a, b) =>
         new Date(b.timestamp) - new Date(a.timestamp)
       );
       setReviews(sortedReviews);
@@ -45,15 +42,15 @@ const ReviewPage = () => {
     }
 
     try {
-      const response = await axios.post('https://server-digi-friend.vercel.app/api/reviews', {
-        ...newReview,
-        name: user.fullName,
-        avatar: user.profileImageUrl,
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await axios.post(
+        `${API_URL}/api/reviews`,
+        {
+          ...newReview,
+          name: user.fullName,
+          avatar: user.profileImageUrl,
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       setReviews([response.data, ...reviews]);
       setNewReview({ rating: 5, comment: '' });
@@ -64,9 +61,7 @@ const ReviewPage = () => {
     }
   };
 
-  const renderStars = (rating) => {
-    return '⭐'.repeat(rating);
-  };
+  const renderStars = (rating) => '⭐'.repeat(rating);
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
@@ -77,71 +72,56 @@ const ReviewPage = () => {
         <h1 className="text-2xl font-bold text-center flex-grow">Reviews</h1>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-100 text-red-700 text-center">
-          {error}
-        </div>
-      )}
+      {error && <div className="p-4 bg-red-100 text-red-700 text-center">{error}</div>}
 
       <div className="flex-grow overflow-y-auto p-4">
         <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
-          <div className="flow-root">
-            <ul role="list" className="divide-y divide-gray-200">
-              {reviews.map((review) => (
-                <li key={review._id} className="py-3 sm:py-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <img 
-                        className="w-8 h-8 rounded-full"
-                        src={review.avatar}
-                        alt={`${review.name}'s avatar`}
-                        onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/40';
-                        }}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0 ms-4">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {review.name}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        {review.comment}
-                      </p>
-                    </div>
-                    <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                      {renderStars(review.rating)}
-                    </div>
+          <ul className="divide-y divide-gray-200">
+            {reviews.map((review) => (
+              <li key={review._id} className="py-3 sm:py-4">
+                <div className="flex items-center">
+                  <img
+                    className="w-8 h-8 rounded-full"
+                    src={review.avatar || 'https://via.placeholder.com/40'}
+                    alt={`${review.name}'s avatar`}
+                  />
+                  <div className="flex-1 min-w-0 ms-4">
+                    <p className="text-sm font-medium text-gray-900 truncate">{review.name}</p>
+                    <p className="text-sm text-gray-500 truncate">{review.comment}</p>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  <div className="inline-flex items-center text-base font-semibold text-gray-900">
+                    {renderStars(review.rating)}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
       <div className="bg-white shadow-md p-4">
         <form onSubmit={handleSubmit} className="flex items-center">
-          <div className="flex-grow relative">
-            <select
-              name="rating"
-              value={newReview.rating}
-              onChange={handleInputChange}
-              className="absolute left-0 top-0 h-full border border-gray-300 rounded-l-full p-2 bg-white"
-            >
-              {[1, 2, 3, 4, 5].map((num) => (
-                <option key={num} value={num}>{num}</option>
-              ))}
-            </select>
-            <input
-              type="text"
-              name="comment"
-              value={newReview.comment}
-              onChange={handleInputChange}
-              placeholder="Write your review..."
-              className="w-full p-2 pl-16 border rounded-full border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+          <select
+            name="rating"
+            value={newReview.rating}
+            onChange={handleInputChange}
+            className="border p-2 rounded-l-full"
+          >
+            {[1, 2, 3, 4, 5].map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            name="comment"
+            value={newReview.comment}
+            onChange={handleInputChange}
+            placeholder="Write your review..."
+            className="flex-grow border p-2 rounded-r-full"
+            required
+          />
           <button
             type="submit"
             className="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
