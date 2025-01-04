@@ -173,7 +173,7 @@ const LandingPage = () => {
                 </p>
               </div>
               {/* Feature: Free Chats */}
-              <div className="w-full sm:w-1/5 mb-8 flex flex-col items-center">
+              <div className="w-full sm:w-1/5 mb-8 flex flex-col items-center">  
                 <div className="bg-white rounded-full p-6 mb-4 shadow-lg">
                   <FaComments className="text-4xl text-blue-500" />
                 </div>
