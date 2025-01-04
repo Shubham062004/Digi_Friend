@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -16,7 +16,6 @@ import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-// import { getCalApi } from "@calcom/embed-react";
 import therapySession from "../assets/therapySession.jpeg";
 
 const LandingPage = () => {
@@ -81,10 +80,6 @@ const LandingPage = () => {
       author: "Happy Client 5",
     },
   ];
-  
-  const handleScheduleMeeting = () => {
-    window.location.href = 'https://cal.com/your-organization'; // Replace with your actual Cal.com link
-  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -128,7 +123,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Our Services Section */}
+        {/* What We Do Section */}
         <section className="py-16">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0">
@@ -178,7 +173,7 @@ const LandingPage = () => {
                 </p>
               </div>
               {/* Feature: Free Chats */}
-              <div className="w-full sm:w-1/5 mb-8 flex flex-col items-center">
+              <div className="w-full sm:w-1/5 mb-8 flex flex-col items-center">  
                 <div className="bg-white rounded-full p-6 mb-4 shadow-lg">
                   <FaComments className="text-4xl text-blue-500" />
                 </div>
@@ -246,10 +241,7 @@ const LandingPage = () => {
                   </div>
                   <div className="flex justify-center">
                     <Link
-                      // to="/booking"
-                      onClick={handleScheduleMeeting}
-                      to="/booking"
-
+                      to="https://cal.com/shubham-kumar-chaurasia-fll1ki"
                       className="inline-block bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition duration-300 text-center w-full md:w-auto"
                     >
                       Book Now
