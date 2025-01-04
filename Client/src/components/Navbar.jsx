@@ -48,7 +48,7 @@ const Navbar = () => {
                     className="flex items-center text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
                   >
                     <img 
-                      src={user.profileImageUrl || '/placeholder.svg?height=32&width=32'} 
+src={user.avatarUrl || '/placeholder.svg?height=32&width=32'}
                       alt={user.fullName} 
                       className="h-8 w-8 rounded-full mr-2"
                     />
@@ -110,12 +110,6 @@ const Navbar = () => {
           {/* </div> */}
         </div>
       </nav>
-
-      {/* Main content */}
-      {/* <div className={`min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 transition-all duration-300 ${showAuthModal ? 'blur-sm' : ''}`}> */}
-        {/* Your main content goes here */}
-        {/* <h1 className="text-4xl font-bold text-center text-gray-900">Welcome to Digi Friend</h1> */}
-      {/* </div> */}
 
       {/* Auth Modal */}
       {showAuthModal && (

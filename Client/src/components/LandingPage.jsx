@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -16,7 +16,6 @@ import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-// import { getCalApi } from "@calcom/embed-react";
 import therapySession from "../assets/therapySession.jpeg";
 
 const LandingPage = () => {
@@ -81,19 +80,12 @@ const LandingPage = () => {
       author: "Happy Client 5",
     },
   ];
-  
-  const handleScheduleMeeting = () => {
-    const apiKey = 'cal_live_6a851c72d7d64b3bc8fd7fcf24bc8773'; // Your Cal.com API key
-    const baseUrl = `https://cal.com/your-organization?apiKey=${apiKey}`;
-    window.location.href = baseUrl; // Redirect to the Cal.com scheduling page
-  };
-  
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        {/* Image Carousel Section */} 
+        {/* Image Carousel Section */}
         <section className="w-full">
           <Carousel autoPlay infiniteLoop showThumbs={false}>
             <div>
@@ -249,8 +241,8 @@ const LandingPage = () => {
                   </div>
                   <div className="flex justify-center">
                     <Link
-                      // to="/booking"
-                      onClick={handleScheduleMeeting}
+                      // onClick={handleScheduleMeeting}
+                      to="https://cal.com/shubham-kumar-chaurasia-fll1ki"
                       className="inline-block bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition duration-300 text-center w-full md:w-auto"
                     >
                       Book Now
