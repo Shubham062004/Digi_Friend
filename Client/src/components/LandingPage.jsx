@@ -14,7 +14,7 @@ import Splide from "@splidejs/splide";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import therapySession from "../assets/therapySession.jpeg";
+// import therapySession from "../assets/therapySession.jpeg";
 import carosal1 from "../assets/005.jpeg";
 import carosal2 from "../assets/007.jpeg";
 import carosal3 from "../assets/009.jpeg";
@@ -29,7 +29,7 @@ const LandingPage = () => {
     const fetchReviews = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/reviews`
+          `${import.meta.env.REACT_APP_API_URL}/api/reviews`
         );
         const sortedReviews = response.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         setReviews(sortedReviews);
