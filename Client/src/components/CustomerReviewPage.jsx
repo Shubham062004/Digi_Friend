@@ -11,7 +11,7 @@ const ReviewPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user, isSignedIn } = useUser();
 
-  const API_URL = import.meta.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_URL = import.meta.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchReviews();
