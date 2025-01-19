@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+// import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -8,16 +9,16 @@ import {
   FaComments,
   FaRegCalendarCheck,
   FaUsers,
-  FaStar,
+  // FaStar,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
-import Splide from "@splidejs/splide";
+// import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
+// import Splide from "@splidejs/splide";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import axios from "axios";
+// import axios from "axios";
 
 // Image imports
 import therapySession from "../assets/therapySession.jpeg";
@@ -80,61 +81,61 @@ const SERVICE_ITEMS = [
  */
 const LandingPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [reviews, setReviews] = useState([]);
-  const splideRef = useRef(null);
+  // const [reviews, setReviews] = useState([]);
+  // const splideRef = useRef(null);
 
   // Fetch reviews and initialize Splide carousel
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.REACT_APP_API_URL}/api/reviews`
-        );
-        const sortedReviews = response.data.sort(
-          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-        );
-        setReviews(sortedReviews);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchReviews = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${import.meta.env.REACT_APP_API_URL}/api/reviews`
+  //       );
+  //       const sortedReviews = response.data.sort(
+  //         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+  //       );
+  //       setReviews(sortedReviews);
+  //     } catch (error) {
+  //       console.error("Error fetching reviews:", error);
+  //     }
+  //   };
 
-    fetchReviews();
-    initializeSplide();
+  //   fetchReviews();
+  //   initializeSplide();
 
-    return () => {
-      if (splideRef.current) {
-        splideRef.current.destroy();
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (splideRef.current) {
+  //       splideRef.current.destroy();
+  //     }
+  //   };
+  // }, []);
 
   /**
    * Initialize Splide carousel with configurations
    */
-  const initializeSplide = () => {
-    if (splideRef.current) {
-      const splide = new Splide(splideRef.current, {
-        type: "loop",
-        drag: "free",
-        focus: "center",
-        perPage: 3,
-        gap: "2rem",
-        arrows: false,
-        pagination: false,
-        autoScroll: {
-          speed: 1,
-          pauseOnHover: true,
-        },
-        breakpoints: {
-          1024: { perPage: 2 },
-          640: { perPage: 1 },
-        },
-      });
+  // const initializeSplide = () => {
+  //   if (splideRef.current) {
+  //     const splide = new Splide(splideRef.current, {
+  //       type: "loop",
+  //       drag: "free",
+  //       focus: "center",
+  //       perPage: 3,
+  //       gap: "2rem",
+  //       arrows: false,
+  //       pagination: false,
+  //       autoScroll: {
+  //         speed: 1,
+  //         pauseOnHover: true,
+  //       },
+  //       breakpoints: {
+  //         1024: { perPage: 2 },
+  //         640: { perPage: 1 },
+  //       },
+  //     });
 
-      splide.mount({ AutoScroll });
-    }
-  };
+  //     splide.mount({ AutoScroll });
+  //   }
+  // };
 
   /**
    * Renders a service card
@@ -349,7 +350,7 @@ const LandingPage = () => {
           </section>
 
           {/* Reviews Section */}
-          <section className="py-16 bg-gray-100">
+          {/* <section className="py-16 bg-gray-100">
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
                 Our Happy Customers
@@ -395,7 +396,7 @@ const LandingPage = () => {
                 </Link>
               </div>
             </div>
-          </section>
+          </section> */}
         </main>
         <Footer />
       </div>

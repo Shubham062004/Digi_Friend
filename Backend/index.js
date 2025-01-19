@@ -2,78 +2,241 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const axios = require('axios');
 
 dotenv.config();
 
 const app = express();
 
-// CORS configuration
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://digifriend.vercel.app'], // Allow both local and production frontends
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://digifriend.vercel.app']
+    : ['http://localhost:3000'],
   credentials: true
 }));
 
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB:', err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected successfully');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  }
+};
+
+connectDB();
+
+// Message Schema
+const messageSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+    index: true
+  },
+  content: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'assistant'],
+    required: true
+  }
+}, {
+  timestamps: true
+});
 
 // Review Schema
 const reviewSchema = new mongoose.Schema({
-  name: String,
-  rating: Number,
-  comment: String,
-  avatar: String,
-  timestamp: { type: Date, default: Date.now }
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5
+  },
+  comment: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 500
+  },
+  avatar: {
+    type: String,
+    trim: true
+  }
+}, {
+  timestamps: true
 });
 
+const Message = mongoose.model('Message', messageSchema);
 const Review = mongoose.model('Review', reviewSchema);
+
+// Message Routes
+app.get('/api/messages/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const messages = await Message.find({ userId })
+      .sort({ createdAt: 1 })
+      .limit(100);
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({
+      message: 'Error fetching messages',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
+app.post('/api/messages', async (req, res) => {
+  try {
+    const { userId, content, role } = req.body;
+
+    if (!userId || !content || !role) {
+      return res.status(400).json({
+        message: 'Please provide all required fields'
+      });
+    }
+
+    const newMessage = new Message({
+      userId,
+      content,
+      role
+    });
+
+    const savedMessage = await newMessage.save();
+    res.status(201).json(savedMessage);
+  } catch (error) {
+    console.error('Error creating message:', error);
+    res.status(500).json({
+      message: 'Error creating message',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
 
 // Review Routes
 app.get('/api/reviews', async (req, res) => {
   try {
-    const reviews = await Review.find().sort({ timestamp: -1 });
+    const reviews = await Review.find()
+      .sort({ createdAt: -1 })
+      .limit(100);
     res.json(reviews);
   } catch (error) {
     console.error('Error fetching reviews:', error);
-    res.status(500).json({ message: 'Error fetching reviews', error: error.message });
+    res.status(500).json({
+      message: 'Error fetching reviews',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
   }
 });
 
 app.post('/api/reviews', async (req, res) => {
   try {
-    const newReview = new Review(req.body);
+    const { name, rating, comment, avatar } = req.body;
+
+    if (!name || !rating || !comment) {
+      return res.status(400).json({
+        message: 'Please provide all required fields'
+      });
+    }
+
+    const newReview = new Review({
+      name,
+      rating,
+      comment,
+      avatar
+    });
+
     const savedReview = await newReview.save();
     res.status(201).json(savedReview);
   } catch (error) {
     console.error('Error creating review:', error);
-    res.status(500).json({ message: 'Error creating review', error: error.message });
-  }
-});
-
-// Cal.com Scheduling Endpoint
-const CAL_API_URL = 'https://api.cal.com/v1/schedule'; // Replace with actual endpoint as necessary
-const API_KEY = process.env.CAL_API_KEY;
-
-app.post('/schedule', async (req, res) => {
-  try {
-    const response = await axios.post(CAL_API_URL, req.body, {
-      headers: {
-        Authorization: `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      },
+    res.status(500).json({
+      message: 'Error creating review',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error scheduling meeting:', error);
-    res.status(500).send('Error scheduling meeting');
   }
 });
 
-const PORT = process.env.PORT || 5000;
+// Delete review route (optional, but useful for moderation)
+app.delete('/api/reviews/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedReview = await Review.findByIdAndDelete(id);
+    
+    if (!deletedReview) {
+      return res.status(404).json({
+        message: 'Review not found'
+      });
+    }
+    
+    res.json({ message: 'Review deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting review:', error);
+    res.status(500).json({
+      message: 'Error deleting review',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
+// Update review route (optional, for editing reviews)
+app.put('/api/reviews/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, rating, comment, avatar } = req.body;
+
+    if (!name || !rating || !comment) {
+      return res.status(400).json({
+        message: 'Please provide all required fields'
+      });
+    }
+
+    const updatedReview = await Review.findByIdAndUpdate(
+      id,
+      { name, rating, comment, avatar },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedReview) {
+      return res.status(404).json({
+        message: 'Review not found'
+      });
+    }
+
+    res.json(updatedReview);
+  } catch (error) {
+    console.error('Error updating review:', error);
+    res.status(500).json({
+      message: 'Error updating review',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: 'Something broke!',
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+  });
+});
+
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

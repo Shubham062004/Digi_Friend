@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@clerk/clerk-react": "^5.21.0",
+    "@clerk/clerk-react": "^5.22.2",
     "@splidejs/splide": "^4.1.4",
     "@splidejs/splide-extension-auto-scroll": "^0.5.3",
     "ai": "^4.0.22",
@@ -21,7 +21,7 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
     "react-responsive-carousel": "^3.2.23",
-    "react-router-dom": "^6.28.1",
+    "react-router-dom": "^6.28.2",
     "socket.io-client": "^4.8.0",
     "styled-components": "^6.1.13"
   },
