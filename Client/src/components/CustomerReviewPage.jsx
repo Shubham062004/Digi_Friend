@@ -11,7 +11,8 @@ const ReviewPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user, isSignedIn } = useUser();
 
-  const API_URL = import.meta.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.REACT_APP_API_URL || 'http://localhost:5001';
+  // const API_URL = import.meta.env.REACT_APP_API_URL || 'https://server-digi-friend.vercel.app';
 
   useEffect(() => {
     fetchReviews();
