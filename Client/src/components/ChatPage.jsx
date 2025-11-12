@@ -1,207 +1,399 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useUser, SignInButton } from '@clerk/clerk-react';
-import { useChat } from 'ai/react';
-import { Send, Menu, X } from 'lucide-react';
-import axios from 'axios';
+import React, { useState, useEffect, useRef } from "react";
+import { useUser, SignInButton } from "@clerk/clerk-react";
+import { Send, Trash2, MessageSquare, Loader2 } from "lucide-react";
+import axios from "axios";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+
+// Local storage utility
+const chatStorage = {
+  getMessages: () => {
+    try {
+      const messages = localStorage.getItem("digi_friend_chat_messages");
+      return messages ? JSON.parse(messages) : [];
+    } catch (error) {
+      console.error("Error reading from localStorage:", error);
+      return [];
+    }
+  },
+
+  saveMessage: (message) => {
+    try {
+      const messages = chatStorage.getMessages();
+      const newMessage = {
+        ...message,
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: new Date().toISOString(),
+      };
+      messages.push(newMessage);
+      localStorage.setItem(
+        "digi_friend_chat_messages",
+        JSON.stringify(messages.slice(-100))
+      );
+      return newMessage;
+    } catch (error) {
+      console.error("Error writing to localStorage:", error);
+      return null;
+    }
+  },
+
+  clearMessages: () => {
+    try {
+      localStorage.removeItem("digi_friend_chat_messages");
+      return true;
+    } catch (error) {
+      console.error("Error clearing localStorage:", error);
+      return false;
+    }
+  },
+
+  getConversationId: () => {
+    try {
+      return (
+        localStorage.getItem("digi_friend_current_conversation") ||
+        `conv_${Date.now()}`
+      );
+    } catch (error) {
+      return `conv_${Date.now()}`;
+    }
+  },
+
+  setConversationId: (conversationId) => {
+    try {
+      localStorage.setItem("digi_friend_current_conversation", conversationId);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+};
 
 function ChatPage() {
-  const { user, isLoaded } = useUser();
-  const [isBlurred, setIsBlurred] = useState(true);
-  const [messageHistory, setMessageHistory] = useState([]);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { messages, input, handleInputChange, handleSubmit: sendMessage } = useChat();
-  const messagesEndRef = useRef(null);
+  const { user, isLoaded, isSignedIn } = useUser();
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const [error, setError] = useState(null);
+  const [conversationId, setConversationId] = useState(
+    chatStorage.getConversationId()
+  );
 
-  const apiUrl = import.meta.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const messagesEndRef = useRef(null);
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, messageHistory]);
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      if (user) {
-        try {
-          const response = await axios.get(`${apiUrl}/api/messages/${user.id}`);
-          setMessageHistory(response.data);
-        } catch (error) {
-          console.error('Error fetching message history:', error);
-        }
-      }
-    };
-
-    if (isLoaded && user) {
-      fetchMessages();
-    }
-  }, [isLoaded, user, apiUrl]);
+  }, [messages]);
 
   useEffect(() => {
     if (isLoaded) {
-      setIsBlurred(!user);
+      loadMessages();
     }
-  }, [isLoaded, user]);
+  }, [isLoaded, isSignedIn]);
 
-  useEffect(() => {
-    const storeAssistantMessage = async (message) => {
-      if (user && message.role === 'assistant') {
-        try {
-          await axios.post(`${apiUrl}/api/messages`, {
-            userId: user.id,
-            content: message.content,
-            role: 'assistant'
-          });
-        } catch (error) {
-          console.error('Error storing assistant message:', error);
+  const loadMessages = async () => {
+    setIsFetching(true);
+    try {
+      if (isSignedIn && user) {
+        const response = await axios.get(
+          `${API_URL}/api/chat/messages/${user.id}`
+        );
+        if (response.data.success) {
+          setMessages(response.data.data);
         }
+      } else {
+        const localMessages = chatStorage.getMessages();
+        setMessages(localMessages);
       }
-    };
-
-    const latestMessage = messages[messages.length - 1];
-    if (latestMessage?.role === 'assistant') {
-      storeAssistantMessage(latestMessage);
+    } catch (error) {
+      console.error("Error loading messages:", error);
+      const localMessages = chatStorage.getMessages();
+      setMessages(localMessages);
+    } finally {
+      setIsFetching(false);
     }
-  }, [messages, user, apiUrl]);
+  };
+
+  const saveMessage = async (message) => {
+    try {
+      if (isSignedIn && user) {
+        await axios.post(`${API_URL}/api/chat/messages`, {
+          userId: user.id,
+          content: message.content,
+          role: message.role,
+          conversationId,
+        });
+      } else {
+        chatStorage.saveMessage(message);
+      }
+    } catch (error) {
+      console.error("Error saving message:", error);
+      chatStorage.saveMessage(message);
+    }
+  };
+
+  const getMockAIResponse = (userMessage) => {
+    const message = userMessage.toLowerCase();
+
+    if (message.includes("anxious") || message.includes("anxiety")) {
+      return "I hear that you're feeling anxious. Anxiety is a common experience. Would you like to try some breathing exercises that might help calm your mind?";
+    }
+
+    if (message.includes("sad") || message.includes("depressed")) {
+      return "I'm sorry you're feeling this way. Your feelings are valid and important. Have you been able to talk to anyone about how you're feeling?";
+    }
+
+    if (message.includes("stress") || message.includes("stressed")) {
+      return "Stress can be overwhelming. Let's work together to identify some healthy coping strategies. What usually helps you relax?";
+    }
+
+    const responses = [
+      "I understand you're going through a difficult time. Can you tell me more about what you're feeling?",
+      "Thank you for sharing that with me. Your feelings are valid. How long have you been experiencing this?",
+      "It's important to acknowledge your emotions. Have you tried any coping strategies that have helped in the past?",
+      "I'm here to support you. Would you like to explore some techniques that might help you feel better?",
+      "That sounds challenging. Remember, seeking help is a sign of strength. Have you considered talking to a professional therapist?",
+    ];
+
+    return responses[Math.floor(Math.random() * responses.length)];
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = {
+      content: input.trim(),
+      role: "user",
+      timestamp: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+    setError(null);
+
+    await saveMessage(userMessage);
 
     try {
-      const userMessage = { userId: user.id, content: input, role: 'user' };
-      await axios.post(`${apiUrl}/api/messages`, userMessage);
-      sendMessage(e);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const aiResponse = {
+        content: getMockAIResponse(userMessage.content),
+        role: "assistant",
+        timestamp: new Date().toISOString(),
+      };
+
+      setMessages((prev) => [...prev, aiResponse]);
+      await saveMessage(aiResponse);
     } catch (error) {
-      console.error('Error storing user message:', error);
+      console.error("Error getting AI response:", error);
+      setError("Failed to get response. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClearChat = async () => {
+    if (!window.confirm("Are you sure you want to clear all chat history?")) {
+      return;
+    }
+
+    try {
+      if (isSignedIn && user) {
+        await axios.delete(`${API_URL}/api/chat/messages/${user.id}`, {
+          params: { conversationId },
+        });
+      }
+
+      chatStorage.clearMessages();
+      setMessages([]);
+
+      const newConvId = `conv_${Date.now()}`;
+      chatStorage.setConversationId(newConvId);
+      setConversationId(newConvId);
+    } catch (error) {
+      console.error("Error clearing chat:", error);
+      setError("Failed to clear chat history");
     }
   };
 
   if (!isLoaded) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="animate-pulse text-xl text-gray-600">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+        <Loader2 className="animate-spin text-blue-600" size={48} />
       </div>
     );
   }
 
-  const allMessages = [...messageHistory, ...messages];
-
-  const renderMessage = (m, index) => (
-    <div 
-      key={m.id || index} 
-      className={`flex items-start space-x-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-    >
-      {m.role === 'assistant' && (
-        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm">
-          AI
-        </div>
-      )}
-      <div 
-        className={`px-4 py-2 rounded-lg max-w-[80%] break-words shadow-sm ${
-          m.role === 'user' 
-            ? 'bg-blue-500 text-white rounded-br-none' 
-            : 'bg-white text-gray-800 rounded-bl-none'
-        }`}
-      >
-        {m.content}
-      </div>
-      {m.role === 'user' && user?.imageUrl && (
-        <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-          <img src={user.imageUrl} alt="User" className="w-full h-full object-cover" />
-        </div>
-      )}
-    </div>
-  );
-
   return (
-    <div className="h-screen bg-gray-50 flex flex-col">
-      <div className="flex-grow flex flex-col w-full mx-auto lg:max-w-6xl">
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="bg-white border-b shadow-sm">
-            <div className="px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <button 
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
-                >
-                  {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-                <h2 className="text-xl font-semibold text-gray-800">Chat Assistant</h2>
-              </div>
-              {user && (
-                <div className="flex items-center space-x-4">
-                  <span className="hidden sm:block text-sm text-gray-600">
-                    {user.fullName || user.username}
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-                    {user.imageUrl && (
-                      <img src={user.imageUrl} alt="Profile" className="w-full h-full object-cover" />
-                    )}
-                  </div>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      <Navbar />
+
+      <div className="flex-1 container mx-auto px-4 py-6 flex flex-col max-w-4xl">
+        {/* Header */}
+        <div className="bg-white rounded-t-lg shadow-md p-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <MessageSquare className="text-blue-600" size={24} />
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">
+                Mental Health Chat
+              </h1>
+              <p className="text-sm text-gray-600">
+                {isSignedIn
+                  ? `Welcome, ${user.firstName || "User"}!`
+                  : "Guest Mode - Sign in to save history"}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleClearChat}
+            className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center space-x-1"
+          >
+            <Trash2 size={16} />
+            <span className="text-sm">Clear</span>
+          </button>
+        </div>
+
+        {/* Messages Area */}
+        <div className="flex-1 bg-white shadow-md overflow-y-auto p-4 space-y-4 min-h-[400px] max-h-[600px]">
+          {isFetching ? (
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="animate-spin text-blue-600" size={32} />
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              {!isSignedIn ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md">
+                  <MessageSquare
+                    className="mx-auto mb-4 text-yellow-600"
+                    size={48}
+                  />
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    Sign in to save your chat history
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Messages are currently saved locally. Sign in to access your
+                    chat history from any device.
+                  </p>
+                  <SignInButton mode="modal">
+                    <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                      Sign In
+                    </button>
+                  </SignInButton>
+                </div>
+              ) : (
+                <div>
+                  <MessageSquare
+                    className="mx-auto mb-4 text-gray-400"
+                    size={48}
+                  />
+                  <p className="text-gray-600">
+                    No messages yet. Start a conversation!
+                  </p>
                 </div>
               )}
             </div>
-          </div>
-          
-          {!user ? (
-            <div className="flex-grow flex items-center justify-center p-4">
-              <div className="text-center space-y-4">
-                <h3 className="text-xl font-medium text-gray-700">Welcome to Chat Assistant</h3>
-                <p className="text-gray-500 max-w-md mx-auto">
-                  Sign in to start a conversation and access your message history.
-                </p>
-                <SignInButton mode="modal">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg transition-colors">
-                    Sign In to Chat
-                  </button>
-                </SignInButton>
-              </div>
-            </div>
           ) : (
-            <div className={`flex flex-col flex-grow ${isBlurred ? 'filter blur-sm' : ''}`}>
-              {/* Message area */}
-              <div className="flex-grow overflow-hidden relative bg-gray-200">
-                <div className="absolute inset-0 p-4">
-                  <div className="h-full overflow-y-auto space-y-6 scroll-smooth">
-                    {allMessages.length === 0 ? (
-                      <div className="flex items-center justify-center h-full">
-                        <p className="text-gray-500 text-center">
-                          No messages yet. Start a conversation!
-                        </p>
-                      </div>
-                    ) : (
-                      allMessages.map((m, index) => renderMessage(m, index))
-                    )}
-                    <div ref={messagesEndRef} />
-                  </div>
+            messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  message.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    message.role === "user"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                >
+                  <p className="text-sm whitespace-pre-wrap">
+                    {message.content}
+                  </p>
+                  <p className="text-xs mt-1 opacity-70">
+                    {new Date(
+                      message.timestamp || message.createdAt
+                    ).toLocaleTimeString()}
+                  </p>
                 </div>
               </div>
+            ))
+          )}
 
-              {/* Input form */}
-              <div className="p-4 bg-white border-t">
-                <form onSubmit={handleSubmit} className="flex space-x-4 max-w-4xl mx-auto">
-                  <input
-                    className="flex-grow px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
-                    value={input}
-                    onChange={handleInputChange}
-                    placeholder="Type your message..."
-                  />
-                  <button 
-                    type="submit" 
-                    className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center w-12"
-                  >
-                    <Send size={20} />
-                  </button>
-                </form>
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">
+                <Loader2 className="animate-spin" size={20} />
               </div>
             </div>
           )}
+
+          <div ref={messagesEndRef} />
         </div>
+
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-r-lg mb-2 flex items-center">
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="ml-auto text-red-700 hover:text-red-900"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* Input Area */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-b-lg shadow-md p-4 flex space-x-2"
+        >
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isLoading}
+            maxLength={2000}
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !input.trim()}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+          >
+            {isLoading ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              <>
+                <Send size={20} />
+                <span>Send</span>
+              </>
+            )}
+          </button>
+        </form>
       </div>
+
+      <Footer />
     </div>
   );
 }

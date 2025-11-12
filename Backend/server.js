@@ -1,162 +1,3 @@
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const cors = require('cors');
-// const dotenv = require('dotenv');
-
-// dotenv.config();
-
-// const app = express();
-
-// // CORS Configuration
-// app.use(
-//   cors({
-//     origin:
-//       process.env.NODE_ENV === 'production'
-//         ? 'https://digifriend.vercel.app'
-//         : 'http://localhost:3000',
-//     credentials: true,
-//   })
-// );
-
-// app.use(express.json());
-
-// // MongoDB Connection
-// const connectDB = async () => {
-//   try {
-//     await mongoose.connect(process.env.MONGODB_URI, {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true,
-//     });
-//     console.log('MongoDB connected successfully');
-//   } catch (err) {
-//     console.error('MongoDB connection error:', err);
-//     process.exit(1);
-//   }
-// };
-// connectDB();
-
-// // Message Schema
-// const messageSchema = new mongoose.Schema(
-//   {
-//     userId: { type: String, required: true, index: true },
-//     content: { type: String, required: true, trim: true },
-//     role: { type: String, enum: ['user', 'assistant'], required: true },
-//   },
-//   { timestamps: true }
-// );
-
-// // Review Schema
-// const reviewSchema = new mongoose.Schema(
-//   {
-//     name: { type: String, required: true, trim: true },
-//     rating: { type: Number, required: true, min: 1, max: 5 },
-//     comment: { type: String, required: true, trim: true, maxlength: 500 },
-//     avatar: { type: String, trim: true },
-//   },
-//   { timestamps: true }
-// );
-
-// const Message = mongoose.model('Message', messageSchema);
-// const Review = mongoose.model('Review', reviewSchema);
-
-// // Message Routes
-// app.get('/api/messages/:userId', async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-//     const messages = await Message.find({ userId }).sort({ createdAt: 1 }).limit(100);
-//     res.json(messages);
-//   } catch (error) {
-//     console.error('Error fetching messages:', error);
-//     res.status(500).json({ message: 'Error fetching messages', error: error.message });
-//   }
-// });
-
-// app.post('/api/messages', async (req, res) => {
-//   try {
-//     const { userId, content, role } = req.body;
-//     if (!userId || !content || !role) return res.status(400).json({ message: 'All fields are required' });
-
-//     const newMessage = new Message({ userId, content, role });
-//     const savedMessage = await newMessage.save();
-//     res.status(201).json(savedMessage);
-//   } catch (error) {
-//     console.error('Error creating message:', error);
-//     res.status(500).json({ message: 'Error creating message', error: error.message });
-//   }
-// });
-
-// // Review Routes
-// app.get('/api/reviews', async (req, res) => {
-//   try {
-//     const reviews = await Review.find().sort({ createdAt: -1 }).limit(100);
-//     res.json(reviews);
-//   } catch (error) {
-//     console.error('Error fetching reviews:', error);
-//     res.status(500).json({ message: 'Error fetching reviews', error: error.message });
-//   }
-// });
-
-// app.post('/api/reviews', async (req, res) => {
-//   try {
-//     const { name, rating, comment, avatar } = req.body;
-//     if (!name || !rating || !comment) return res.status(400).json({ message: 'All fields are required' });
-
-//     const newReview = new Review({ name, rating, comment, avatar });
-//     const savedReview = await newReview.save();
-//     res.status(201).json(savedReview);
-//   } catch (error) {
-//     console.error('Error creating review:', error);
-//     res.status(500).json({ message: 'Error creating review', error: error.message });
-//   }
-// });
-
-// // Delete Review
-// app.delete('/api/reviews/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const deletedReview = await Review.findByIdAndDelete(id);
-//     if (!deletedReview) return res.status(404).json({ message: 'Review not found' });
-
-//     res.json({ message: 'Review deleted successfully' });
-//   } catch (error) {
-//     console.error('Error deleting review:', error);
-//     res.status(500).json({ message: 'Error deleting review', error: error.message });
-//   }
-// });
-
-// // Update Review
-// app.put('/api/reviews/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { name, rating, comment, avatar } = req.body;
-//     if (!name || !rating || !comment) return res.status(400).json({ message: 'All fields are required' });
-
-//     const updatedReview = await Review.findByIdAndUpdate(
-//       id,
-//       { name, rating, comment, avatar },
-//       { new: true, runValidators: true }
-//     );
-
-//     if (!updatedReview) return res.status(404).json({ message: 'Review not found' });
-//     res.json(updatedReview);
-//   } catch (error) {
-//     console.error('Error updating review:', error);
-//     res.status(500).json({ message: 'Error updating review', error: error.message });
-//   }
-// });
-
-// // Global Error Handling Middleware
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).json({ message: 'Internal server error', error: err.message });
-// });
-
-// const PORT = process.env.PORT || 5001;
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -167,67 +8,161 @@ dotenv.config();
 const app = express();
 
 // CORS Configuration
+const allowedOrigins = [
+  'https://digifriend.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? 'https://digifriend.vercel.app'
-        : 'http://localhost:3000',
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// MongoDB Connection
-const connectDB = async () => {
+// Request logging middleware
+if (process.env.NODE_ENV === 'development') {
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// MongoDB Connection - FIXED (removed deprecated options)
+const connectDB = async (retries = 5) => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('MongoDB connected successfully');
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    console.log('✅ MongoDB connected successfully');
   } catch (err) {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
+    console.error('❌ MongoDB connection error:', err.message);
+    if (retries > 0) {
+      console.log(`Retrying connection... (${retries} attempts left)`);
+      setTimeout(() => connectDB(retries - 1), 5000);
+    } else {
+      console.error('Failed to connect to MongoDB after multiple attempts');
+      process.exit(1);
+    }
   }
 };
+
 connectDB();
 
-
-// Review Schema
-const reviewSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    rating: { type: Number, required: true, min: 1, max: 5 },
-    comment: { type: String, required: true, trim: true, maxlength: 500 },
-    avatar: { type: String, trim: true },
-  },
-  { timestamps: true }
-);
-
-const Review = mongoose.model('Review', reviewSchema);
-
-// Root route to check if server is running
-app.get('/', (req, res) => {
-  res.json({ message: 'Server connected successfully' });
+// Enhanced MongoDB connection event handlers
+mongoose.connection.on('connected', () => {
+  console.log('✅ Mongoose connected to MongoDB');
 });
 
-// Fetch all reviews
-app.get('/api/reviews', async (req, res) => {
+mongoose.connection.on('disconnected', () => {
+  console.warn('⚠️  Mongoose disconnected');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ Mongoose error:', err.message);
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
   try {
-    const reviews = await Review.find().sort({ createdAt: -1 }).limit(100);
-    res.json(reviews);
-  } catch (error) {
-    console.error('Error fetching reviews:', error);
-    res.status(500).json({ message: 'Error fetching reviews', error: error.message });
+    await mongoose.connection.close();
+    console.log('Mongoose connection closed through app termination');
+    process.exit(0);
+  } catch (err) {
+    console.error('Error during graceful shutdown:', err);
+    process.exit(1);
   }
 });
 
-// Global Error Handling Middleware
+// Import Routes
+const clientRoutes = require('./routes/clientRoutes');
+const reviewRoutes = require('./routes/reviews');
+const chatRoutes = require('./routes/chatRoutes');
+
+// Use Routes
+app.use('/api/client', clientRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/chat', chatRoutes);
+
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Digi Friend API Server',
+    status: 'running',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      reviews: '/api/reviews',
+      client: '/api/client',
+      chat: '/api/chat',
+    },
+  });
+});
+
+// Health check route
+app.get('/api/health', (req, res) => {
+  const healthStatus = {
+    success: true,
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+    database: {
+      status: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+      name: mongoose.connection.name,
+    },
+    memory: {
+      used: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`,
+      total: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`,
+    },
+  };
+
+  const statusCode = healthStatus.database.status === 'connected' ? 200 : 503;
+  res.status(statusCode).json(healthStatus);
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+    path: req.originalUrl,
+    availableRoutes: ['/api/health', '/api/reviews', '/api/client', '/api/chat'],
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Global Error Handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Internal server error', error: err.message });
+  console.error('❌ Error:', err.stack);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  });
 });
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🌐 CORS enabled for: ${allowedOrigins.join(', ')}`);
 });
+
+module.exports = app;

@@ -47,7 +47,7 @@ const SERVICE_ITEMS = [
     title: "Chat with Us",
     description:
       "Connect with our experienced professionals who are ready to provide immediate support and guidance tailored to your needs.",
-    link: "/chatpage",
+    link: "/chat",
     buttonText: "Start Chatting",
     isExternal: false,
   },
@@ -192,7 +192,7 @@ const LandingPage = () => {
                     well-being journey.
                   </p>
                   <Link
-                    to="/chatpage"
+                    to="/chat"
                     className="inline-block bg-black text-white font-bold py-3 px-8 rounded-none hover:bg-gray-800 transition duration-300"
                   >
                     CHAT →

@@ -131,7 +131,7 @@ const Navbar = () => {
               Reviews
             </Link>
             <Link
-              to="/chatpage"
+              to="/chat"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50"
             >
               Chat
@@ -188,7 +188,7 @@ const Navbar = () => {
             <div className="flex justify-center py-2">
               {[
                 { to: "/reviews", text: "Reviews" },
-                { to: "/chatpage", text: "Chat" },
+                { to: "/chat", text: "Chat" },
                 {
                   to: "https://cal.com/shubham-kumar-chaurasia-fll1ki",
                   text: "Meeting",
