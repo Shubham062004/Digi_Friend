@@ -1,3 +1,10 @@
+
+<!--
+    ChatPage ko user friendly banana hai
+    and bit more change in chat page.
+-->
+
+
 # Digi Friend
 
 ## Overview
